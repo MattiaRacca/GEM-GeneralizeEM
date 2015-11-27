@@ -54,12 +54,7 @@ else
     else
         %   random initialization
         for k=1:K
-            switch distribution_type(k)
-                case 1
-                   distribution{k}.mu(1) = fitExponential(randsample(data,floor(length(data)/K)));
-                case 2
-                   [distribution{k}.mu(1), distribution{k}.sigma(1)] = fitGaussian(randsample(data,floor(length(data)/K)));
-            end
+            distribution = fitDistribution( distribution, k, 1, randsample(data,floor(length(data)/K)));
         end
     end
     
@@ -92,12 +87,7 @@ else
         
         % Reestimation of parameters
         for k=1:K
-            switch distribution_type(k)
-                case 1
-                    distribution{k}.mu(i) = fitExponential(data, Post(:,k));
-                case 2
-                    [distribution{k}.mu(i), distribution{k}.sigma(i)] = fitGaussian(data, Post(:,k));
-            end
+            distribution = fitDistribution( distribution, k, i, data, Post(:,k));
         end
         
         % Reestimation of priors
