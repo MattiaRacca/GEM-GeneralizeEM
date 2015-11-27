@@ -24,6 +24,7 @@ for k=1:K
 end
 
 if K == 1
+    distribution{K}.prior = 1;
     switch distribution_type
         case 1
             distribution{K}.mu = fitExponential(data);
