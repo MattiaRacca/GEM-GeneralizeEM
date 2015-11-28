@@ -25,12 +25,7 @@ end
 
 if K == 1
     distribution{K}.prior = 1;
-    switch distribution_type
-        case 1
-            distribution{K}.mu = fitExponential(data);
-        case 2
-            [distribution{K}.mu, distribution{K}.sigma] = fitGaussian(data);
-    end
+    distribution = fitDistribution( distribution, K, 1, data);
 else
     %% Initialization of the distributions and priors
     
@@ -66,12 +61,7 @@ else
     for i=2:iterations
         % Compute probabilities
         for k=1:K
-            switch distribution_type(k)
-                case 1
-                    P(:,k) = Exponential(distribution{k}.mu(i-1), data);                          % Probability Exponential
-                case 2
-                    P(:,k) = Gaussian(distribution{k}.mu(i-1),distribution{k}.sigma(i-1), data);  % Probability Gaussian
-            end
+            P(:,k) = computeProbability( distribution, k, i-1, data );
         end
         
         % Compute posteriors

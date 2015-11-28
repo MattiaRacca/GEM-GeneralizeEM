@@ -120,7 +120,7 @@ distribution_type = [1 2 2]';
 
 %%  Mixture fitting
 iterations = 100;
-distribution_type = [1 2]';
+distribution_type = [2]';
 
 [ distribution2 ] = gem( data, iterations, distribution_type);
 
@@ -200,10 +200,94 @@ plot(range_points, sum_PDF, 'b', 'linewidth', 2);
 plot(range_points, sum_PDF2, 'r', 'linewidth', 2);
 plot(range_points, sum_PDF3, 'g', 'linewidth', 2);
 
+%%  Likelihood computation
+
 disp('LogLikelihood analysis - 3° example');
 disp('LogLikelihood 1xExp + 2xGauss:')
 disp(computeLikelihood(distribution, data, 1));
-disp('LogLikelihood 1xExp + 1xGauss:')
+disp('LogLikelihood 1xGauss:')
 disp(computeLikelihood(distribution2, data, 1));
 disp('LogLikelihood 4xGauss:')
 disp(computeLikelihood(distribution3, data, 1));
+
+pause;
+
+%%%%%%%%%%%%%%%%% Example 4: BIC test
+
+%%  Load data
+x1 = exprnd(0.5*ones(4000,1));
+x2 = exprnd(1*ones(200,1));
+x3 = abs(4*ones(500,1) + 8.*randn(500,1));
+
+data = [x1; x2; x3];
+
+%%  Mixture fitting
+iterations = 100;
+distribution_type = [1 1]';
+
+[ distribution1 ] = gem( data, iterations, distribution_type);
+
+%%  Mixture fitting
+iterations = 100;
+distribution_type = [1 2]';
+
+[ distribution2 ] = gem( data, iterations, distribution_type);
+
+%%  Plots
+range_points = linspace(0 , 30);
+
+% First mixture
+PDF = zeros(length(range_points),length(distribution1));
+sum_PDF1 = zeros(length(range_points),1);
+
+for k=1:length(distribution1)
+    switch distribution1{k}.type
+        case 1
+            PDF1(:,k) = distribution1{k}.prior(end)*Exponential(distribution1{k}.mu(end), range_points);
+        case 2
+            PDF1(:,k) = distribution1{k}.prior(end)*Gaussian(distribution1{k}.mu(end), distribution1{k}.sigma(end), range_points);
+    end
+    sum_PDF1 = sum_PDF1 + PDF1(:,k);
+end
+
+% Second mixture
+PDF2 = zeros(length(range_points),length(distribution2));
+sum_PDF2 = zeros(length(range_points),1);
+
+for k=1:length(distribution2)
+    switch distribution2{k}.type
+        case 1
+            PDF2(:,k) = distribution2{k}.prior(end)*Exponential(distribution2{k}.mu(end), range_points);
+        case 2
+            PDF2(:,k) = distribution2{k}.prior(end)*Gaussian(distribution2{k}.mu(end), distribution2{k}.sigma(end), range_points);
+    end
+    sum_PDF2 = sum_PDF2 + PDF2(:,k);
+end
+
+figure
+hold on;
+title('Distribution and Mixture modelling: example 4')
+
+h = histogram(data,'Normalization','pdf');
+
+pause;
+
+for k=1:length(distribution1)
+    plot(range_points, PDF1(:,k), 'b--', 'linewidth', 1);
+end
+for k=1:length(distribution2)
+    plot(range_points, PDF2(:,k), 'r--', 'linewidth', 1);
+end
+
+pause;
+
+plot(range_points, sum_PDF1, 'b', 'linewidth', 2);
+plot(range_points, sum_PDF2, 'r', 'linewidth', 2);
+
+%% BIC
+
+disp('LogLikelihood analysis - 4° example');
+disp('BIC 2xExp:')
+disp(computeBIC(distribution1, data));
+disp('BIC 1xExp + 1xGauss:')
+disp(computeBIC(distribution2, data));
