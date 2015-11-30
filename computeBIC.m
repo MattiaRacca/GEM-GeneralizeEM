@@ -18,6 +18,8 @@ for i=1:length(distribution)
     end
 end
 
+K = K + length(distribution) -1;
+
 if nargin > 2
     BIC = -2*loglikelihood + K*log(N);
 else
