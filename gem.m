@@ -61,7 +61,7 @@ else
     for i=2:iterations
         % Compute probabilities
         for k=1:K
-            P(:,k) = computeProbability( distribution, k, i-1, data );
+            P(:,k) = computeProbability( distribution, k, data, i-1 );
         end
         
         % Compute posteriors

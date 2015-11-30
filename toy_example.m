@@ -26,8 +26,8 @@ sum_PDF = zeros(length(range_points),1);
 
 for k=1:length(distribution_type)
     PDF(:,k) = distribution{k}.prior(end)*Gaussian(distribution{k}.mu(end), distribution{k}.sigma(end), range_points);
-    sum_PDF = sum_PDF + PDF(:,k);
 end
+sum_PDF = computeProbabilityMixture( distribution, range_points, iterations );
 
 figure
 hold on;
@@ -247,8 +247,8 @@ for k=1:length(distribution1)
         case 2
             PDF1(:,k) = distribution1{k}.prior(end)*Gaussian(distribution1{k}.mu(end), distribution1{k}.sigma(end), range_points);
     end
-    sum_PDF1 = sum_PDF1 + PDF1(:,k);
 end
+sum_PDF1 = computeProbabilityMixture( distribution1, range_points, iterations);
 
 % Second mixture
 PDF2 = zeros(length(range_points),length(distribution2));
