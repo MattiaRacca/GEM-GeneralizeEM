@@ -20,7 +20,7 @@ distribution_type = [2 2 2]';
 [ distribution ] = gem( data, iterations, distribution_type);
 
 %%  Plots
-range_points = linspace(-10 , 15);
+range_points = linspace(-10 , 15)';
 PDF = zeros(length(range_points),length(distribution_type));
 sum_PDF = zeros(length(range_points),1);
 
@@ -66,7 +66,7 @@ distribution_type = [1 1 2]';
 [ distribution ] = gem( data, iterations, distribution_type);
 
 %%  Plots
-range_points = linspace(0 , 30);
+range_points = linspace(0 , 30)';
 PDF = zeros(length(range_points),length(distribution_type));
 sum_PDF = zeros(length(range_points),1);
 
@@ -131,7 +131,7 @@ distribution_type = [2 2 2 2]';
 [ distribution3 ] = gem( data, iterations, distribution_type);
 
 %%  Plots
-range_points = linspace(0 , 30);
+range_points = linspace(0 , 30)';
 
 % First mixture
 PDF = zeros(length(range_points),length(distribution));
@@ -234,7 +234,7 @@ distribution_type = [1 2]';
 [ distribution2 ] = gem( data, iterations, distribution_type);
 
 %%  Plots
-range_points = linspace(0 , 30);
+range_points = linspace(0 , 30)';
 
 % First mixture
 PDF = zeros(length(range_points),length(distribution1));
