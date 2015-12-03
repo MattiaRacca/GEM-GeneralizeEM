@@ -10,12 +10,7 @@ N = length(data);
 %   Compute number of parameters K
 K = 0;
 for i=1:length(distribution)
-    switch distribution{i}.type
-        case 1
-            K = K + 1;
-        case 2
-            K = K + 2;
-    end
+    K = K + getNumberParameters(distribution{i});
 end
 
 K = K + length(distribution) -1;
