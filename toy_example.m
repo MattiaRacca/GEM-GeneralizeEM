@@ -4,6 +4,11 @@
 clear all; close all; clc;
 set(0,'DefaultFigureWindowStyle','docked');
 rng(13245);
+
+experiment_number = 5;
+
+switch experiment_number
+    case 1
 %%%%%%%%%%%%%%%%% Example 1: GMM (3 Normal distribution)
 
 %%  Load data
@@ -50,6 +55,7 @@ plot(range_points, sum_PDF, 'b', 'linewidth', 2);
 % disp(computeLikelihood(distribution, data, 1));
 pause;
 
+    case 2
 %%%%%%%%%%%%%%%%% Example 2: Mixture (2 Exponential + 1 Normal)
 
 %%  Load data
@@ -101,6 +107,7 @@ plot(range_points, sum_PDF, 'b', 'linewidth', 2);
 % disp(computeLikelihood(distribution, data, 1));
 pause;
 
+    case 3
 %%%%%%%%%%%%%%%%% Example 3: Mixture (1 Exponential + 2 Normal) vs Mixture
 %%%%%%%%%%%%%%%%% (1 Exponential + 1 Normal) vs Mixture (4 Normal)
 
@@ -120,7 +127,7 @@ distribution_type = [1 2 2]';
 
 %%  Mixture fitting
 iterations = 100;
-distribution_type = [2]';
+distribution_type = 2;
 
 [ distribution2 ] = gem( data, iterations, distribution_type);
 
@@ -212,6 +219,7 @@ disp(computeLikelihood(distribution3, data, 1));
 
 pause;
 
+    case 4
 %%%%%%%%%%%%%%%%% Example 4: BIC test
 
 %%  Load data
@@ -237,8 +245,7 @@ distribution_type = [1 2]';
 range_points = linspace(0 , 30)';
 
 % First mixture
-PDF = zeros(length(range_points),length(distribution1));
-sum_PDF1 = zeros(length(range_points),1);
+PDF1 = zeros(length(range_points),length(distribution1));
 
 for k=1:length(distribution1)
     switch distribution1{k}.type
@@ -291,3 +298,66 @@ disp('BIC 2xExp:')
 disp(computeBIC(distribution1, data));
 disp('BIC 1xExp + 1xGauss:')
 disp(computeBIC(distribution2, data));
+
+    case 5
+%%%%%%%%%%%%%%%%% Example 5: Laplace test
+
+%%  Load data
+x1 = exprnd(0.5*ones(4000,1));
+x2 = abs(- exprnd(1*ones(800,1)) + 4*ones(800,1));
+x3 = exprnd(1*ones(800,1)) + 4*ones(800,1);
+
+data = [x1; x2; x3];
+
+%%  Mixture fitting
+iterations = 100;
+distribution_type = [1 3]';
+
+[ distribution1 ] = gem( data, iterations, distribution_type);
+
+iterations = 100;
+distribution_type = [1 2]';
+
+[ distribution2 ] = gem( data, iterations, distribution_type);
+
+%%  Plots
+range_points = linspace(0 , 10)';
+
+% First mixture
+PDF1 = zeros(length(range_points),length(distribution1));
+
+for k=1:length(distribution1)
+    PDF1(:,k) = computeProbability( distribution1, k, range_points);
+end
+sum_PDF1 = computeProbabilityMixture( distribution1, range_points, iterations);
+
+% Second mixture
+PDF2 = zeros(length(range_points),length(distribution2));
+
+for k=1:length(distribution2)
+    PDF2(:,k) = computeProbability( distribution2, k, range_points);
+end
+sum_PDF2 = computeProbabilityMixture( distribution2, range_points, iterations);
+
+
+figure
+hold on;
+title('Distribution and Mixture modelling: example 5')
+
+h = histogram(data,'Normalization','pdf');
+
+pause;
+
+for k=1:length(distribution1)
+    plot(range_points, PDF1(:,k), 'b--', 'linewidth', 1);
+end
+for k=1:length(distribution2)
+    plot(range_points, PDF2(:,k), 'r--', 'linewidth', 1);
+end
+
+pause;
+
+plot(range_points, sum_PDF1, 'b', 'linewidth', 2);
+plot(range_points, sum_PDF2, 'r', 'linewidth', 2);
+
+end

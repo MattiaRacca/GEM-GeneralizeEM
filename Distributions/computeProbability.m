@@ -7,9 +7,11 @@ P = zeros(n,1);
 if nargin > 3
     switch distribution{k}.type
         case 1
-            P = Exponential(distribution{k}.mu(i), data);                          % Probability Exponential
+            P = Exponential(distribution{k}.mu(i), data);                           % Probability Exponential
         case 2
-            P = Gaussian(distribution{k}.mu(i),distribution{k}.sigma(i), data);  % Probability Gaussian
+            P = Gaussian(distribution{k}.mu(i),distribution{k}.sigma(i), data);     % Probability Gaussian
+        case 3
+            P = Laplace(distribution{k}.mu(i),distribution{k}.sigma(i), data);      % Probability Laplace 
     end
 else
     switch distribution{k}.type
@@ -17,6 +19,8 @@ else
             P = Exponential(distribution{k}.mu(end), data);                          % Probability Exponential
         case 2
             P = Gaussian(distribution{k}.mu(end),distribution{k}.sigma(end), data);  % Probability Gaussian
+        case 3
+            P = Laplace(distribution{k}.mu(end),distribution{k}.sigma(end), data);   % Probability Laplace
     end
 end
 end

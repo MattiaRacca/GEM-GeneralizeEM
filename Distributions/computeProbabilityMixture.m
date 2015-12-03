@@ -4,15 +4,18 @@ function [ P ] = computeProbabilityMixture( distribution, data, i )
 n = length(data);
 P = zeros(n,1);
 
-if nargin < 3
-    for k=1:length(distribution)
-        P = P + (distribution{k}.prior(end) * computeProbability( distribution, k, data));
-    end
+if length(distribution) == 1
+    P = (distribution{1}.prior(end) * computeProbability( distribution, 1, data));
 else
-    for k=1:length(distribution)
-        P = P + (distribution{k}.prior(i) * computeProbability( distribution, k, data, i ));
+    if nargin < 3
+        for k=1:length(distribution)
+            P = P + (distribution{k}.prior(end) * computeProbability( distribution, k, data));
+        end
+    else
+        for k=1:length(distribution)
+            P = P + (distribution{k}.prior(i) * computeProbability( distribution, k, data, i ));
+        end
     end
 end
-
 end
 

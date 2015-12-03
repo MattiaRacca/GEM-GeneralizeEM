@@ -4,7 +4,7 @@ K = 0;
 switch distribution.type
         case 1
             K = K + 1;
-        case 2
+        case {2, 3}
             K = K + 2;
 end
 end

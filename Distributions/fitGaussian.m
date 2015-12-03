@@ -1,6 +1,6 @@
 function [ mean_gauss, std_gauss ] = fitGaussian( data, W )
 %FITGAUSSIAN Maximum likelihood estimate for Normal distribution
-%   Use W for setting weights to dat
+%   Use W for setting weights to data
 
 if nargin == 1
     mean_gauss = mean(data);

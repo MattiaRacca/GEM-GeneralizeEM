@@ -14,6 +14,8 @@ if nargin < 5
             fitted_distribution{k}.mu(i) = fitExponential(data);
         case 2
             [fitted_distribution{k}.mu(i), fitted_distribution{k}.sigma(i)] = fitGaussian(data);
+        case 3
+            [fitted_distribution{k}.mu(i), fitted_distribution{k}.sigma(i)] = fitLaplace(data);
     end
 else
     switch distribution{k}.type
@@ -21,6 +23,8 @@ else
             fitted_distribution{k}.mu(i) = fitExponential(data,W);
         case 2
             [fitted_distribution{k}.mu(i), fitted_distribution{k}.sigma(i)] = fitGaussian(data,W);
+        case 3
+            [fitted_distribution{k}.mu(i), fitted_distribution{k}.sigma(i)] = fitLaplace(data,W);
     end
 end
 

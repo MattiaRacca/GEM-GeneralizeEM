@@ -10,6 +10,7 @@ function [ distribution ] = gem( data, iterations, distribution_type, initializa
 %   Supported distributions:
 %       1) Exponential          http://se.mathworks.com/help/stats/exponential-distribution.html
 %       2) Normal (Gaussian)    http://se.mathworks.com/help/stats/normal-distribution.html
+%       3) Laplace              https://en.wikipedia.org/wiki/Laplace_distribution
 %
 %   Author: Mattia Racca        Date: 27/11/2015
 
@@ -44,6 +45,8 @@ else
                 case 2
                     distribution{k}.mu(1) = initialization{k}.mu;
                     distribution{k}.sigma(1) = initialization{k}.sigma;
+                case 3
+                    % TODO
             end
         end
     else
