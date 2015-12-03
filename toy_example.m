@@ -3,7 +3,7 @@
 %   Date:   27/11/2015
 clear all; close all; clc;
 set(0,'DefaultFigureWindowStyle','docked');
-
+rng(13245);
 %%%%%%%%%%%%%%%%% Example 1: GMM (3 Normal distribution)
 
 %%  Load data
