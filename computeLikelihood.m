@@ -11,12 +11,7 @@ if(log_likelihood)
     for i=1:N
         sample_L = 0;
         for k=1:K
-            switch distribution{k}.type
-                case 1
-                    sample_L = sample_L + distribution{k}.prior(end) * Exponential(distribution{k}.mu(end),data(i));
-                case 2
-                    sample_L = sample_L + distribution{k}.prior(end) * Gaussian(distribution{k}.mu(end),distribution{k}.sigma(end),data(i));
-            end
+            sample_L = sample_L + distribution{k}.prior(end)*computeProbability( distribution, k, data(i));
         end
         likelihood = likelihood + log(sample_L);
     end
@@ -25,12 +20,7 @@ else
     for i=1:N
         sample_L = 0;
         for k=1:K
-            switch distribution{k}.type
-                case 1
-                    sample_L = sample_L + distribution{k}.prior(end) * Exponential(distribution{k}.mu(end),data(i));
-                case 2
-                    sample_L = sample_L + distribution{k}.prior(end) * Gaussian(distribution{k}.mu(end),distribution{k}.sigma(end),data(i));
-            end
+            sample_L = sample_L + distribution{k}.prior(end)*computeProbability( distribution, k, data(i));
         end
         likelihood = likelihood * sample_L;
     end
