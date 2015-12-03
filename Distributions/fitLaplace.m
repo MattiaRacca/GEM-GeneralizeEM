@@ -6,8 +6,7 @@ if nargin == 1
     mean_lap = median(data);
     std_lap  = mean(abs(data - mean_lap));
 else
-    % TODO
-    mean_lap = median(W.*data);
+    mean_lap = W'*data / sum(W);
     std_lap  = W'*(abs(data - mean_lap))/sum(W);
 end
 
