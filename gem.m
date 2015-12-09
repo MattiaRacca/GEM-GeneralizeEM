@@ -11,7 +11,6 @@ function [ distribution ] = gem( data, iterations, distribution_type, initializa
 %       1) Exponential          http://se.mathworks.com/help/stats/exponential-distribution.html
 %       2) Normal (Gaussian)    http://se.mathworks.com/help/stats/normal-distribution.html
 %       3) Laplace              https://en.wikipedia.org/wiki/Laplace_distribution
-%       4) Student-t            http://se.mathworks.com/help/stats/tpdf.html
 %
 %   Author: Mattia Racca        Date: 27/11/2015
 
@@ -50,20 +49,12 @@ else
                     case 3
                         distribution{k}.mu(1) = initialization{k}.mu;
                         distribution{k}.sigma(1) = initialization{k}.sigma;
-                    case 4
-                        distribution{k}.mu(1) = initialization{k}.mu;
-                        distribution{k}.sigma(1) = initialization{k}.sigma;
-                        distribution{k}.nu(1) = initialization{k}.nu;
                 end
             else
                 distribution = fitDistribution( distribution, k, 1, randsample(data,floor(length(data)/K)));
             end
         end
     else
-        %   random initialization
-        %   DOES NOT WORK FOR STUDENT-T DISTRIBUTION (parameter nu has no close formula and has to be specified or estimated through EM)
-        %   A solution is to allow in fitDistribution for the Student-t
-        %   case to use the EM itselfs with only one distribution
         for k=1:K
                 distribution = fitDistribution( distribution, k, 1, randsample(data,floor(length(data)/K)));
         end
