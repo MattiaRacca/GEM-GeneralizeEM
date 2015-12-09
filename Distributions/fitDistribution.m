@@ -17,7 +17,7 @@ if nargin < 5
         case 3
             [fitted_distribution{k}.mu(i), fitted_distribution{k}.sigma(i)] = fitLaplace(data);
         case 4
-            [fitted_distribution{k}.mu(i), fitted_distribution{k}.lambda(i), fitted_distribution{k}.nu(i)] = fitStudent(data);
+            [fitted_distribution{k}.mu(i), fitted_distribution{k}.lambda(i), fitted_distribution{k}.nu(i)] = fitStudent(data, 0.1);
     end
 else
     switch distribution{k}.type
@@ -28,7 +28,7 @@ else
         case 3
             [fitted_distribution{k}.mu(i), fitted_distribution{k}.sigma(i)] = fitLaplace(data,W);
         case 4
-            [fitted_distribution{k}.mu(i), fitted_distribution{k}.lambda(i), fitted_distribution{k}.nu(i)] = fitStudent(data, W);
+            [fitted_distribution{k}.mu(i), fitted_distribution{k}.lambda(i), fitted_distribution{k}.nu(i)] = fitStudent(data,fitted_distribution{k}.nu(i-1), W, fitted_distribution{k}.mu(i-1),fitted_distribution{k}.lambda(i-1));
     end
 end
 

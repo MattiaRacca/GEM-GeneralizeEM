@@ -13,7 +13,7 @@ switch experiment_number
 
 %%  Load data
 x1 = randn(4000,1);
-x2 = 8*ones(2000,1) + randn(2000,1);
+x2 = 8*ones(2000,1) + 2.*randn(2000,1);
 x3 = -5*ones(1000,1) + randn(1000,1);
 
 data = [x1; x2; x3];
@@ -364,28 +364,67 @@ plot(range_points, sum_PDF2, 'r', 'linewidth', 2);
 %%%%%%%%%%%%%%%%% Example 5: Laplace test
 
 %%  Load data
-x1 = trnd(123, 800,1) + 10*ones(800,1);
-x2 = trnd(4, 800,1) - 20*ones(800,1);
+x1 = 3.*trnd(120,800,1) + 10*ones(800,1);
+x2 = trnd(300,800,1) - 20*ones(800,1);
+data = x1;
 data = [x1; x2];
+
+figure
+hold on;
+title('Student-t modelling: example 6')
+
+h = histogram(data,'Normalization','pdf');
+h.NumBins = 100;
+pause;
 
 %%  Mixture fitting
 iterations = 100;
+% distribution_type = [4]';
+distribution_type = [2 2]';
+
+for k=1:length(distribution_type)
+    initialization{k}.mu = randsample(data,1);
+    initialization{k}.sigma = 1;
+end
+init_vect = [1 1];
+
+[ distribution_gauss ] = gem( data, iterations, distribution_type, initialization, init_vect);
+
+%%  Plots
+range_points = linspace(-30 , 20)';
+
+% Gauss mixture
+PDFG = zeros(length(range_points),length(distribution_gauss));
+
+for k=1:length(distribution_gauss)
+    PDFG(:,k) = computeProbability( distribution_gauss, k, range_points);
+end
+sum_PDFG = computeProbabilityMixture( distribution_gauss, range_points, iterations);
+
+for k=1:length(distribution_gauss)
+    plot(range_points, PDFG(:,k), 'r--', 'linewidth', 1);
+end
+pause;
+
+plot(range_points, sum_PDFG, 'r', 'linewidth', 2);
+pause;
+
+%%  Mixture fitting
+iterations = 10;
+% distribution_type = [4]';
 distribution_type = [4 4]';
 
-initialization{1}.mu = 7;
-initialization{1}.lambda = 1;
-initialization{1}.nu = 10;
-
-initialization{2}.mu = -14;
-initialization{2}.lambda = 1;
-initialization{2}.nu = 7;
-
+for k=1:length(distribution_type)
+    initialization{k}.mu = distribution_gauss{k}.mu(end);
+    initialization{k}.lambda = 1/distribution_gauss{k}.sigma(end);
+    initialization{k}.nu = 10;
+end
 init_vect = [1 1];
 
 [ distribution1 ] = gem( data, iterations, distribution_type, initialization, init_vect);
 
-%%  Plots
-range_points = linspace(0 , 30)';
+
+%% Plots
 
 % First mixture
 PDF1 = zeros(length(range_points),length(distribution1));
@@ -395,20 +434,31 @@ for k=1:length(distribution1)
 end
 sum_PDF1 = computeProbabilityMixture( distribution1, range_points, iterations);
 
-figure
-hold on;
-title('Student-t modelling: example 6')
-
-h = histogram(data,'Normalization','pdf');
-
-pause;
 
 for k=1:length(distribution1)
     plot(range_points, PDF1(:,k), 'b--', 'linewidth', 1);
 end
-
 pause;
-
 plot(range_points, sum_PDF1, 'b', 'linewidth', 2);
-        
+
+figure
+title('Simil sigma')
+hold on
+for k=1:length(distribution1)
+    plot(distribution1{k}.lambda.^-0.5);
+end
+
+figure
+hold on
+title('Nu')
+for k=1:length(distribution1)
+    plot(distribution1{k}.nu);
+end
+
+figure
+hold on
+title('Prior')
+for k=1:length(distribution1)
+    plot(distribution1{k}.prior);
+end
 end

@@ -1,14 +1,21 @@
-function [ mu, lambda, nu] = fitStudent( data, W )
+function [ mu, lambda, nu] = fitStudent( data, nu_init, W, mu_init, lambda_init)
 %FITSTUDENT Maximum likelihood estimate for Student-t distribution
 %   Use W for setting weights to data
 
-if nargin == 1
+if nargin == 2
     [mu, temp] = fitGaussian(data);
     lambda = 1/temp;
-    nu = 10;
+    nu = nu_init;
     start = 1;
     
     for i=1:100
+        
+        %   A derivation of the Em Updates for Finding the ML param
+        %   estimation of the Student's t Distribution
+        %   C. Scheffler, 2008
+        %   http://www.inference.phy.cam.ac.uk/cs482/publications/scheffler2008derivation.pdf
+        
+        
         u = ((nu+1)*ones(size(data))./(nu+lambda*(data-mu).^2));
         mu_new = u'*data/sum(u);
         lambda_new = mean(u.*(data-mu_new).^2)^-1;
@@ -16,16 +23,30 @@ if nargin == 1
         f = @(nu) -psi(nu/2) + log(nu) + 1 + psi((nu+1)/2) - log(nu+1) + mean(log(u)-u);
         if start
             start = 0;
-            nu_new = fzero(f, [1E-4,1E+4]);
+            if(prod(isfinite([f(1E-4),f(1E+4)])))
+                nu_new = fzero(f, [1E-4,1E+4]);
+            else
+                factor = 2;
+                Mm = [nu/factor, nu*factor];
+                while f(Mm(1))*f(Mm(2)) >= 0
+                    Mm(1) = Mm(1) / factor;
+                    Mm(2) = Mm(2) * factor;
+                end
+                if(and(prod(isfinite(Mm)), prod(isfinite(f(Mm)))))
+                    nu_new = fzero(f, Mm);
+                else
+                    break
+                end
+            end
         else
             factor = 2;
-            minmax = [nu/2, nu*2];
-            while f(minmax(1))*f(minmax(2)) >= 0
-                minmax(1) = minmax(1) / factor;
-                minmax(2) = minmax(2) * factor;
+            Mm = [nu/factor, nu*factor];
+            while f(Mm(1))*f(Mm(2)) >= 0
+                Mm(1) = Mm(1) / factor;
+                Mm(2) = Mm(2) * factor;
             end
-            if(prod(isfinite(minmax)))
-                nu_new = fzero(f, minmax);
+            if(and(prod(isfinite(Mm)), prod(isfinite(f(Mm)))))
+                nu_new = fzero(f, Mm);
             else
                 break
             end
@@ -35,38 +56,37 @@ if nargin == 1
         lambda = lambda_new;
     end
 else
-    [mu, temp] = fitGaussian(data,W);
-    lambda = 1/temp;
-    nu = 10;
-    start = 1;
+    mu = mu_init;
+    lambda = lambda_init;
+    nu = nu_init;
     
-    for i=1:100
-        u = ((nu+1)*ones(size(data))./(nu+lambda*((W.*data-mu)/sum(W)).^2));
-        mu_new = sum(W.*u.*data)/(u'*W);
-        %%%%% LAMBDA FORMULA HAS SOME PROBLEM
-        lambda_new = 1/mean(u.*((W.*data-mu_new).^2/sum(W)));
-        %%%%%
-        f = @(nu) -psi(nu/2) + log(nu) + 1 + psi((nu+1)/2) - log(nu+1) + mean(log(u)-u);
-        if start
-            start = 0;
-            nu_new = fzero(f, [1E-4,1E+4]);
-        else
-            factor = 2;
-            minmax = [nu/2, nu*2];
-            while f(minmax(1))*f(minmax(2)) >= 0
-                minmax(1) = minmax(1) / factor;
-                minmax(2) = minmax(2) * factor;
-            end
-            if(prod(isfinite(minmax)))
-                nu_new = fzero(f, minmax);
-            else
-                break
-            end
+    %   Robust mixture modelling using the t distribution
+    %   D. Peel, G. J. McLachlan
+    %   Statistics and Computing (2000)
+    
+    u = (nu+1)*ones(size(data))./(nu + lambda*(data-mu).^2);
+    mu_new = sum(W.*u.*data)/(u'*W);
+    lambda_new = sum(W.*u.*(data - mu).^2)/sum(W);
+    f = @(nu) log(nu) - psi(nu/2) +1 - log(nu+1) + psi((nu+1)/2) + (W'*(log(u)-u))/sum(W);
+    
+    if(prod(isfinite([f(1E-4),f(1E+4)])))
+        nu_new = fzero(f, [1E-4,1E+4]);
+    else
+%         error('Impossible to estimate nu of the Student-t distribution');
+        factor = 2;
+        Mm = [nu/factor, nu*factor];
+        while f(Mm(1))*f(Mm(2)) >= 0
+            Mm(1) = Mm(1) / factor;
+            Mm(2) = Mm(2) * factor;
         end
-        nu = nu_new;
-        mu = mu_new;
-        lambda = lambda_new;
+        if(and(prod(isfinite(Mm)), prod(isfinite(f(Mm)))))
+            nu_new = fzero(f, Mm);
+        else
+            error('Impossible to estimate nu of the Student-t distribution');
+        end
     end
+    
+    mu = mu_new; lambda = lambda_new; nu = nu_new;
 end
 end
 
