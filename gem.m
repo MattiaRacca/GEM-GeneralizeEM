@@ -52,7 +52,7 @@ else
                         distribution{k}.sigma(1) = initialization{k}.sigma;
                     case 4
                         distribution{k}.mu(1) = initialization{k}.mu;
-                        distribution{k}.sigma(1) = initialization{k}.sigma;
+                        distribution{k}.lambda(1) = initialization{k}.sigma;
                         distribution{k}.nu(1) = initialization{k}.nu;
                 end
             else

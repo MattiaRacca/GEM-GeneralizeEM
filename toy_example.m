@@ -5,7 +5,7 @@ clear all; close all; clc;
 set(0,'DefaultFigureWindowStyle','docked');
 rng(13245);
 
-experiment_number = 5;
+experiment_number = 6;
 
 switch experiment_number
     case 1
@@ -360,4 +360,45 @@ pause;
 plot(range_points, sum_PDF1, 'b', 'linewidth', 2);
 plot(range_points, sum_PDF2, 'r', 'linewidth', 2);
 
+    case 6
+%%%%%%%%%%%%%%%%% Example 5: Laplace test
+
+%%  Load data
+x1 = trnd(123, 800,1) + 10*ones(800,1);
+
+data = [x1];
+
+%%  Mixture fitting
+iterations = 100;
+distribution_type = [4]';
+
+[ distribution1 ] = gem( data, iterations, distribution_type);
+
+%%  Plots
+range_points = linspace(0 , 30)';
+
+% First mixture
+PDF1 = zeros(length(range_points),length(distribution1));
+
+for k=1:length(distribution1)
+    PDF1(:,k) = computeProbability( distribution1, k, range_points);
+end
+sum_PDF1 = computeProbabilityMixture( distribution1, range_points, iterations);
+
+figure
+hold on;
+title('Distribution and Mixture modelling: example 5')
+
+h = histogram(data,'Normalization','pdf');
+
+pause;
+
+for k=1:length(distribution1)
+    plot(range_points, PDF1(:,k), 'b--', 'linewidth', 1);
+end
+
+pause;
+
+plot(range_points, sum_PDF1, 'b', 'linewidth', 2);
+        
 end

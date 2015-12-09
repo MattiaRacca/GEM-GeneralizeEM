@@ -16,6 +16,8 @@ if nargin < 5
             [fitted_distribution{k}.mu(i), fitted_distribution{k}.sigma(i)] = fitGaussian(data);
         case 3
             [fitted_distribution{k}.mu(i), fitted_distribution{k}.sigma(i)] = fitLaplace(data);
+        case 4
+            [fitted_distribution{k}.mu(i), fitted_distribution{k}.lambda(i), fitted_distribution{k}.nu(i)] = fitStudent(data);
     end
 else
     switch distribution{k}.type
