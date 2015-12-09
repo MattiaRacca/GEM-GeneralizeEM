@@ -365,14 +365,24 @@ plot(range_points, sum_PDF2, 'r', 'linewidth', 2);
 
 %%  Load data
 x1 = trnd(123, 800,1) + 10*ones(800,1);
-
-data = [x1];
+x2 = trnd(4, 800,1) - 20*ones(800,1);
+data = [x1; x2];
 
 %%  Mixture fitting
 iterations = 100;
-distribution_type = [4]';
+distribution_type = [4 4]';
 
-[ distribution1 ] = gem( data, iterations, distribution_type);
+initialization{1}.mu = 7;
+initialization{1}.lambda = 1;
+initialization{1}.nu = 10;
+
+initialization{2}.mu = -14;
+initialization{2}.lambda = 1;
+initialization{2}.nu = 7;
+
+init_vect = [1 1];
+
+[ distribution1 ] = gem( data, iterations, distribution_type, initialization, init_vect);
 
 %%  Plots
 range_points = linspace(0 , 30)';
@@ -387,7 +397,7 @@ sum_PDF1 = computeProbabilityMixture( distribution1, range_points, iterations);
 
 figure
 hold on;
-title('Distribution and Mixture modelling: example 5')
+title('Student-t modelling: example 6')
 
 h = histogram(data,'Normalization','pdf');
 
