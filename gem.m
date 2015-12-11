@@ -65,7 +65,7 @@ else
             if  distribution_type(k) == 4
                 distribution{k}.mu(1) = randsample(data,1);
                 distribution{k}.lambda(1) = 10*rand();
-                distribution{k}.nu(1) = 0.1;
+                distribution{k}.nu(1) = 1*rand();
             else
                 distribution = fitDistribution( distribution, k, 1, randsample(data,floor(length(data)/K)));
             end

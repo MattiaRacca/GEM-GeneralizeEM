@@ -66,13 +66,12 @@ else
     
     u = (nu+1)*ones(size(data))./(nu + lambda*(data-mu).^2);
     mu_new = sum(W.*u.*data)/(u'*W);
-    lambda_new = sum(W.*u.*(data - mu).^2)/sum(W);
+    lambda_new = (sum(W.*u.*(data - mu_new).^2)/sum(W))^-1;
     f = @(nu) log(nu) - psi(nu/2) +1 - log(nu+1) + psi((nu+1)/2) + (W'*(log(u)-u))/sum(W);
     
     if(prod(isfinite([f(1E-4),f(1E+4)])))
         nu_new = fzero(f, [1E-4,1E+4]);
     else
-%         error('Impossible to estimate nu of the Student-t distribution');
         factor = 2;
         Mm = [nu/factor, nu*factor];
         while f(Mm(1))*f(Mm(2)) >= 0
@@ -82,7 +81,8 @@ else
         if(and(prod(isfinite(Mm)), prod(isfinite(f(Mm)))))
             nu_new = fzero(f, Mm);
         else
-            error('Impossible to estimate nu of the Student-t distribution');
+            nu_new = nu;
+%             error('Impossible to estimate nu of the Student-t distribution');
         end
     end
     
