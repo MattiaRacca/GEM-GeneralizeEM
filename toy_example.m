@@ -3,9 +3,9 @@
 %   Date:   27/11/2015
 clear all; close all; clc;
 set(0,'DefaultFigureWindowStyle','docked');
-rng(13245);
+rng(12345);
 
-experiment_number = 5;
+experiment_number = 6;
 
 switch experiment_number
     case 1
@@ -13,7 +13,7 @@ switch experiment_number
 
 %%  Load data
 x1 = randn(4000,1);
-x2 = 8*ones(2000,1) + randn(2000,1);
+x2 = 8*ones(2000,1) + 2.*randn(2000,1);
 x3 = -5*ones(1000,1) + randn(1000,1);
 
 data = [x1; x2; x3];
@@ -360,4 +360,83 @@ pause;
 plot(range_points, sum_PDF1, 'b', 'linewidth', 2);
 plot(range_points, sum_PDF2, 'r', 'linewidth', 2);
 
+    case 6
+%%%%%%%%%%%%%%%%% Example 5: Laplace test
+
+%%  Load data
+range_points = linspace(-30 , 30, 600)';
+
+x1 = 5.*randn(60,1) + 10*ones(60,1);
+x2 = randn(90,1) - 20*ones(90,1);
+x3 = range_points(1)*ones(60,1) + (range_points(end)-range_points(1))*rand(60,1);
+data = [x1; x2; x3];
+
+figure
+hold on;
+title('Student-t modelling: example 6')
+h = histogram(data,'Normalization','pdf');
+h.NumBins = 100;
+scatter(data, -0.02*ones(size(data)),'b', 'filled');
+pause;
+
+%%  Mixture fitting
+iterations = 100;
+% distribution_type = [4]';
+distribution_type = [2 2]';
+
+[ distribution_gauss ] = gem( data, iterations, distribution_type);
+
+%%  Plots
+
+
+% Gauss mixture
+PDFG = zeros(length(range_points),length(distribution_gauss));
+
+for k=1:length(distribution_gauss)
+    PDFG(:,k) = computeProbability( distribution_gauss, k, range_points);
+end
+sum_PDFG = computeProbabilityMixture( distribution_gauss, range_points, iterations);
+plot(range_points, sum_PDFG, 'r', 'linewidth', 2);
+
+pause;
+
+%%  Mixture fitting
+iterations = 100;
+distribution_type = [4 4]';
+
+[ distribution1 ] = gem( data, iterations, distribution_type);
+
+
+%% Plots
+
+% First mixture
+PDF1 = zeros(length(range_points),length(distribution1));
+
+for k=1:length(distribution1)
+    PDF1(:,k) = computeProbability( distribution1, k, range_points);
+end
+sum_PDF1 = computeProbabilityMixture( distribution1, range_points, iterations);
+plot(range_points, sum_PDF1, 'b', 'linewidth', 2);
+
+% Mixture param
+% figure
+% title('Simil sigma')
+% hold on
+% for k=1:length(distribution1)
+%     plot(distribution1{k}.lambda.^-0.5);
+% end
+% 
+% figure
+% hold on
+% title('Nu')
+% for k=1:length(distribution1)
+%     plot(distribution1{k}.nu);
+% end
+% 
+% figure
+% hold on
+% title('Prior')
+% for k=1:length(distribution1)
+%     plot(distribution1{k}.prior);
+% end
 end

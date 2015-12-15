@@ -1,4 +1,4 @@
-function [ distribution ] = gem( data, iterations, distribution_type, initialization, initializ_vector)
+function [ distribution ] = gem( data, iterations, distribution_type, initialization, initializ_vect)
 %GEM General Expectation Maximization algorithm
 %   [DISTRIBUTION] = GEM(DATA, DISTRIBUTION_TYPE, ITERATION) fits mixture of different
 %   distributions to 1-D data.  
@@ -11,6 +11,7 @@ function [ distribution ] = gem( data, iterations, distribution_type, initializa
 %       1) Exponential          http://se.mathworks.com/help/stats/exponential-distribution.html
 %       2) Normal (Gaussian)    http://se.mathworks.com/help/stats/normal-distribution.html
 %       3) Laplace              https://en.wikipedia.org/wiki/Laplace_distribution
+%	4) Student-t		https://en.wikipedia.org/wiki/Student's_t-distribution
 %
 %   Author: Mattia Racca        Date: 27/11/2015
 
@@ -49,14 +50,25 @@ else
                     case 3
                         distribution{k}.mu(1) = initialization{k}.mu;
                         distribution{k}.sigma(1) = initialization{k}.sigma;
+                    case 4
+                        distribution{k}.mu(1) = initialization{k}.mu;
+                        distribution{k}.lambda(1) = initialization{k}.lambda;
+                        distribution{k}.nu(1) = initialization{k}.nu;
                 end
             else
                 distribution = fitDistribution( distribution, k, 1, randsample(data,floor(length(data)/K)));
             end
         end
     else
+        %   random initialization
         for k=1:K
+            if  distribution_type(k) == 4
+                distribution{k}.mu(1) = randsample(data,1);
+                distribution{k}.lambda(1) = 10*rand();
+                distribution{k}.nu(1) = 1*rand();
+            else
                 distribution = fitDistribution( distribution, k, 1, randsample(data,floor(length(data)/K)));
+            end
         end
     end
     
