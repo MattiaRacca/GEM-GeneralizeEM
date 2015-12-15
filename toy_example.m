@@ -367,8 +367,8 @@ plot(range_points, sum_PDF2, 'r', 'linewidth', 2);
 range_points = linspace(-30 , 30, 600)';
 
 x1 = 5.*randn(60,1) + 10*ones(60,1);
-x2 = randn(60,1) - 20*ones(60,1);
-x3 = range_points(1)*ones(40,1) + (range_points(end)-range_points(1))*rand(40,1);
+x2 = randn(90,1) - 20*ones(90,1);
+x3 = range_points(1)*ones(60,1) + (range_points(end)-range_points(1))*rand(60,1);
 data = [x1; x2; x3];
 
 figure
@@ -401,7 +401,7 @@ plot(range_points, sum_PDFG, 'r', 'linewidth', 2);
 pause;
 
 %%  Mixture fitting
-iterations = 30;
+iterations = 100;
 distribution_type = [4 4]';
 
 [ distribution1 ] = gem( data, iterations, distribution_type);
